@@ -7,7 +7,7 @@ import subprocess
 import datetime
 
 from ui.screen import setup_ui
-
+# src\ui\screen.py
 intents = discord.Intents.all()
 
 bot = commands.Bot(command_prefix='!', intents=intents)
