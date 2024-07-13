@@ -21,7 +21,7 @@ HEIGHT = disp.height
 
 
 def setup_ui():
-    image_file = "assets/veno_mood_1.png"
+    image_file = "/assets/veno_mood_1.png"
 
     # Initialize display.
     disp.begin()

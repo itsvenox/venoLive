@@ -6,7 +6,9 @@ import socket
 import subprocess
 import datetime
 
-import screen
+from ui.screen import setup_ui
+
+
 intents = discord.Intents.all()
 
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -15,7 +17,7 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-    screen.setup_ui()
+    setup_ui()
 
 @bot.command(name='WEE')
 async def wee(ctx):
