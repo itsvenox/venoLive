@@ -1,15 +1,12 @@
 import os
 import discord
 from discord.ext import commands
-# import sqlite3
-# from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
 
 intents = discord.Intents.all()
 
-# Pass intents to the Bot class
 bot = commands.Bot(command_prefix='!', intents=intents)
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 
@@ -17,9 +14,10 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-@bot.command(name='auh')
-async def save_memory(ctx):
-    await ctx.reply('YES!')
+@bot.command(name='WEE')
+async def wee(ctx):
+    await ctx.reply('WEEEEE!')
+
 
 @bot.command(name='memo')
 async def get_memories(ctx):
@@ -29,5 +27,6 @@ async def get_memories(ctx):
 @bot.command(name='delete')
 async def delete_memory(ctx):
     pass
+
 
 bot.run(DISCORD_BOT_TOKEN)
