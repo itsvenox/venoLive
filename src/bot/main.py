@@ -1,8 +1,10 @@
 import os
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
-load_dotenv()
+import psutil
+import socket
+# from dotenv import load_dotenv
+# load_dotenv()
 
 
 intents = discord.Intents.all()
@@ -19,9 +21,20 @@ async def wee(ctx):
     await ctx.reply('WEEEEE!')
 
 
-@bot.command(name='memo')
-async def get_memories(ctx):
-    pass
+@bot.command(name='status')
+async def get_status(ctx):
+    # Get CPU temperature
+    temp = psutil.sensors_temperatures()['cpu_thermal'][0].current
+
+    # Get IP address
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip_address = s.getsockname()[0]
+    s.close()
+
+    # Send message with hardware information
+    await ctx.reply(f'CPU Temperature: {temp}°C\nIP Address: {ip_address}')
+
 
 
 @bot.command(name='delete')
