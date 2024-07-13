@@ -39,8 +39,15 @@ async def get_status(ctx):
         elif 'Link Quality' in line:
             wifi_signal = line.split('=')[1].strip()
 
-    # Send message with hardware information
-    await ctx.reply(f'CPU Temperature: {temp}°C\nIP Address: {ip_address}\nWiFi SSID: {wifi_ssid}\nWiFi Signal: {wifi_signal}')
+    # Create an embed with the hardware information
+    embed = discord.Embed(title='System Status', color=0x00ff00)
+    embed.add_field(name='CPU Temperature', value=f'{temp}°C', inline=False)
+    embed.add_field(name='IP Address', value=ip_address, inline=False)
+    embed.add_field(name='WiFi SSID', value=wifi_ssid, inline=False)
+    embed.add_field(name='WiFi Signal', value=wifi_signal, inline=False)
+
+    # Send the embed
+    await ctx.reply(embed=embed)
 
 @bot.command(name='delete')
 async def delete_memory(ctx):
