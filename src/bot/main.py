@@ -45,11 +45,11 @@ async def get_status(ctx):
 
     # Create an embed with the hardware information
     embed = discord.Embed(title='System Status', color=0x00ff00)
-    embed.add_field(name='Current Time : ', value=current_time, inline=True)
-    embed.add_field(name='CPU Temperature : ', value=f'{temp}°C', inline=True)
-    embed.add_field(name='IP Address : ', value=ip_address, inline=True)
-    embed.add_field(name='WiFi SSID : ', value=wifi_ssid, inline=True)
-    embed.add_field(name='WiFi Signal : ', value=wifi_signal, inline=True)
+    embed.add_field(name=f'Current Time : {current_time}', inline=True)
+    embed.add_field(name=f'CPU Temperature : {temp}°C', inline=True)
+    embed.add_field(name=f'IP Address : {ip_address}', inline=True)
+    embed.add_field(name=f'WiFi SSID : {wifi_ssid}', inline=True)
+    embed.add_field(name=f'WiFi Signal : {wifi_signal}', inline=True)
 
     # Send the embed
     await ctx.reply(embed=embed)
