@@ -3,9 +3,7 @@ import discord
 from discord.ext import commands
 import psutil
 import socket
-# from dotenv import load_dotenv
-# load_dotenv()
-
+import subprocess
 
 intents = discord.Intents.all()
 
@@ -20,7 +18,6 @@ async def on_ready():
 async def wee(ctx):
     await ctx.reply('WEEEEE!')
 
-
 @bot.command(name='status')
 async def get_status(ctx):
     # Get CPU temperature
@@ -32,14 +29,21 @@ async def get_status(ctx):
     ip_address = s.getsockname()[0]
     s.close()
 
+    # Get WiFi information
+    wifi_info = subprocess.check_output(['iwconfig']).decode('utf-8')
+    wifi_ssid = None
+    wifi_signal = None
+    for line in wifi_info.split('\n'):
+        if 'ESSID' in line:
+            wifi_ssid = line.split(':')[1].strip().replace('"', '')
+        elif 'Link Quality' in line:
+            wifi_signal = line.split('=')[1].strip()
+
     # Send message with hardware information
-    await ctx.reply(f'CPU Temperature: {temp}°C\nIP Address: {ip_address}')
-
-
+    await ctx.reply(f'CPU Temperature: {temp}°C\nIP Address: {ip_address}\nWiFi SSID: {wifi_ssid}\nWiFi Signal: {wifi_signal}')
 
 @bot.command(name='delete')
 async def delete_memory(ctx):
     pass
-
 
 bot.run(DISCORD_BOT_TOKEN)
