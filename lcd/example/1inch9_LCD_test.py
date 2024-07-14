@@ -79,21 +79,20 @@ try:
     image2=image2.rotate(0)
     disp.ShowImage(image2)
     time.sleep(2)
-    
+
     logging.info("show image")
-    ImagePath = "../pic/veno_mood_1.jpg"
+    ImagePath = ["../pic/LCD_1inch9_1.jpg", "../pic/LCD_1inch9_2.jpg", "../pic/LCD_1inch9_3.jpg", "../pic/veno_mood_1.jpg"]
+    for i in range(0, 4):
+        image = Image.open(ImagePath[i])
+        # image = image.rotate(0)
+        disp.ShowImage(image)
+        time.sleep(2)
+    disp.module_exit()
+    logging.info("quit:")
 
-
-    image = Image.open(ImagePath)	
-    # image = image.rotate(0)
-    disp.ShowImage(image)
-    # time.sleep(2)
-    # disp.module_exit()
-    # logging.info("quit:")
-    
 except IOError as e:
-    logging.info(e)    
-    
+    logging.info(e)
+
 except KeyboardInterrupt:
     disp.module_exit()
     logging.info("quit:")
