@@ -156,7 +156,7 @@ class LCD_1inch9(lcdconfig.RaspberryPi):
             img = self.np.asarray(Image)
             pix = self.np.zeros((imheight,imwidth , 2), dtype = self.np.uint8)
             
-            pix[...,[0]] = self.np.add(self.np.bitwise_and(img[...,[0]],0xF8),self.np.right_shift(img[...,[1]],5))
+            pix[...,[0]] = self.np.add(self.np.bitwise_and(img[...,[0]],0xF8), self.np.right_shift(img[...,[1]],5))
             pix[...,[1]] = self.np.add(self.np.bitwise_and(self.np.left_shift(img[...,[1]],3),0xE0), self.np.right_shift(img[...,[2]],3))
             pix = pix.flatten().tolist()
             

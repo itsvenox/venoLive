@@ -81,7 +81,8 @@ try:
     time.sleep(2)
     
     logging.info("show image")
-    ImagePath = "../pic/veno_mood_1.png"
+    ImagePath = "../pic/veno_mood_1.jpg"
+
 
     image = Image.open(ImagePath)	
     # image = image.rotate(0)
