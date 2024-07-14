@@ -24,7 +24,7 @@ class Screen:
 
 
     def setup_screen(self):
-        image_file = "/assets/veno_mood_1.png"
+        image_file = "assets/veno_mood_1.png"
         # Initialize display.
         self.disp.begin()
         # Load an image.
