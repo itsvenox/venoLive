@@ -23,7 +23,6 @@ class Screen:
         self.HEIGHT = self.disp.height
 
 
-    @staticmethod
     def setup_screen(self):
         image_file = "/assets/veno_mood_1.png"
         # Initialize display.
