@@ -14,7 +14,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ui.screen import Screen
 
 
+
 intents = discord.Intents.all()
+screen = Screen()
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
@@ -22,7 +24,7 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-    Screen.setup_screen()
+    screen.setup_screen()
 
 @bot.command(name='WEE')
 async def wee(ctx):
