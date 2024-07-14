@@ -1,12 +1,17 @@
-import os
+
 import discord
 from discord.ext import commands
 import psutil
 import socket
 import subprocess
 import datetime
+import sys
+import os
 
-from ui.screen import setup_ui
+# Add the parent directory to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from ui.screen import Screen
 
 
 intents = discord.Intents.all()
@@ -17,7 +22,7 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-    setup_ui()
+    Screen.setup_screen()
 
 @bot.command(name='WEE')
 async def wee(ctx):
