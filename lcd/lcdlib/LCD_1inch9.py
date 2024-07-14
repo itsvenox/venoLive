@@ -1,39 +1,37 @@
-
 import time
-
 import numpy as np
 from . import lcdconfig
 
 class LCD_1inch9(lcdconfig.RaspberryPi):
     width = 170
-    height = 320 
+    height = 320
     
     def command(self, cmd):
         self.digital_write(self.DC_PIN, False)
-        self.spi_writebyte([cmd])   
+        self.spi_writebyte([cmd])
         
     def data(self, val):
         self.digital_write(self.DC_PIN, True)
-        self.spi_writebyte([val])   
+        self.spi_writebyte([val])
         
     def reset(self):
         """Reset the display"""
-        self.digital_write(self.RST_PIN,True)
+        self.digital_write(self.RST_PIN, True)
         time.sleep(0.01)
-        self.digital_write(self.RST_PIN,False)
+        self.digital_write(self.RST_PIN, False)
         time.sleep(0.01)
-        self.digital_write(self.RST_PIN,True)
+        self.digital_write(self.RST_PIN, True)
         time.sleep(0.01)
         
     def Init(self):
-        """Initialize dispaly"""  
+        """Initialize display"""
         self.module_init()
         self.reset()
 
         self.command(0x36)
         self.data(0x00)
 
-        self.command(0x3A) 
+        self.command(0x3A)
         self.data(0x55)
 
         self.command(0xB2)
@@ -44,7 +42,7 @@ class LCD_1inch9(lcdconfig.RaspberryPi):
         self.data(0x33)
 
         self.command(0xB7)
-        self.data(0x35) 
+        self.data(0x35)
 
         self.command(0xBB)
         self.data(0x13)
@@ -56,13 +54,13 @@ class LCD_1inch9(lcdconfig.RaspberryPi):
         self.data(0x01)
 
         self.command(0xC3)
-        self.data(0x0B)   
+        self.data(0x0B)
 
         self.command(0xC4)
         self.data(0x20)
 
         self.command(0xC6)
-        self.data(0x0F) 
+        self.data(0x0F)
 
         self.command(0xD0)
         self.data(0xA4)
@@ -106,73 +104,78 @@ class LCD_1inch9(lcdconfig.RaspberryPi):
 
         self.command(0x29)
   
-    def SetWindows(self, Xstart, Ystart, Xend, Yend, horizontal = 0):
+    def SetWindows(self, Xstart, Ystart, Xend, Yend, horizontal=0):
         if horizontal:
-            #set the X coordinates
+            # Set the X coordinates
             self.command(0x2A)
-            self.data(Xstart>>8)        #Set the horizontal starting point to the high octet
-            self.data(Xstart & 0xff)    #Set the horizontal starting point to the low octet
-            self.data(Xend-1>>8)        #Set the horizontal end to the high octet
-            self.data((Xend-1) & 0xff)  #Set the horizontal end to the low octet 
-            #set the Y coordinates
+            self.data(Xstart >> 8)  # Set the horizontal starting point to the high octet
+            self.data(Xstart & 0xff)  # Set the horizontal starting point to the low octet
+            self.data(Xend - 1 >> 8)  # Set the horizontal end to the high octet
+            self.data((Xend - 1) & 0xff)  # Set the horizontal end to the low octet
+            # Set the Y coordinates
             self.command(0x2B)
-            self.data(Ystart+35>>8)
-            self.data((Ystart+35 & 0xff))
-            self.data(Yend+35-1>>8)
-            self.data((Yend+35-1 ) & 0xff )
-            self.command(0x2C)    
+            self.data(Ystart + 35 >> 8)
+            self.data((Ystart + 35 & 0xff))
+            self.data(Yend + 35 - 1 >> 8)
+            self.data((Yend + 35 - 1) & 0xff)
+            self.command(0x2C)
         else:
-            #set the X coordinates
+            # Set the X coordinates
             self.command(0x2A)
-            self.data(Xstart+35>>8)         #Set the horizontal starting point to the high octet
-            self.data(Xstart+35 & 0xff)     #Set the horizontal starting point to the low octet
-            self.data(Xend+35-1>>8)         #Set the horizontal end to the high octet
-            self.data((Xend+35 - 1) & 0xff) #Set the horizontal end to the low octet 
-            #set the Y coordinates
+            self.data(Xstart + 35 >> 8)  # Set the horizontal starting point to the high octet
+            self.data(Xstart + 35 & 0xff)  # Set the horizontal starting point to the low octet
+            self.data(Xend + 35 - 1 >> 8)  # Set the horizontal end to the high octet
+            self.data((Xend + 35 - 1) & 0xff)  # Set the horizontal end to the low octet
+            # Set the Y coordinates
             self.command(0x2B)
-            self.data(Ystart>>8)
+            self.data(Ystart >> 8)
             self.data((Ystart & 0xff))
-            self.data(Yend -1>>8)
-            self.data((Yend - 1) & 0xff )
+            self.data(Yend - 1 >> 8)
+            self.data((Yend - 1) & 0xff)
             self.command(0x2C)
 
     def ShowImage(self, Image):
         """Set buffer to value of Python Imaging Library image."""
         """Write display buffer to physical display"""
+        Image = Image.resize((self.width, self.height))
+        Image = Image.convert("RGB")  # Ensure image is in RGB mode
         imwidth, imheight = Image.size
-        if imwidth == self.height and imheight ==  self.width:
-            img = self.np.asarray(Image)
-            pix = self.np.zeros((self.width, self.height,2), dtype = self.np.uint8)
-            #RGB888 >> RGB565
-            pix[...,[0]] = self.np.add(self.np.bitwise_and(img[...,[0]],0xF8),self.np.right_shift(img[...,[1]],5))
-            pix[...,[1]] = self.np.add(self.np.bitwise_and(self.np.left_shift(img[...,[1]],3),0xE0), self.np.right_shift(img[...,[2]],3))
+        print(f"Image dimensions: {imwidth}x{imheight}")  # Debug: Print image dimensions
+        if imwidth == self.height and imheight == self.width:
+            img = np.asarray(Image)
+            print(f"Image array shape: {img.shape}")  # Debug: Print array shape
+            pix = np.zeros((self.width, self.height, 2), dtype=np.uint8)
+            # RGB888 >> RGB565
+            pix[..., [0]] = np.add(np.bitwise_and(img[..., [0]], 0xF8), np.right_shift(img[..., [1]], 5))
+            pix[..., [1]] = np.add(np.bitwise_and(np.left_shift(img[..., [1]], 3), 0xE0), np.right_shift(img[..., [2]], 3))
             pix = pix.flatten().tolist()
 
             self.command(0x36)
             self.data(0x70)
-            self.SetWindows(0, 0, self.height,self.width, 1)
-            self.digital_write(self.DC_PIN,True)
-            for i in range(0,len(pix),4096):
+            self.SetWindows(0, 0, self.height, self.width, 1)
+            self.digital_write(self.DC_PIN, True)
+            for i in range(0, len(pix), 4096):
                 self.spi_writebyte(pix[i:i+4096])
-        else :
-            img = self.np.asarray(Image)
-            pix = self.np.zeros((imheight,imwidth , 2), dtype = self.np.uint8)
+        else:
+            img = np.asarray(Image)
+            print(f"Image array shape: {img.shape}")  # Debug: Print array shape
+            pix = np.zeros((imheight, imwidth, 2), dtype=np.uint8)
 
-            pix[...,[0]] = self.np.add(self.np.bitwise_and(img[...,[0]],0xF8),self.np.right_shift(img[...,[1]],5))
-            pix[...,[1]] = self.np.add(self.np.bitwise_and(self.np.left_shift(img[...,[1]],3),0xE0), self.np.right_shift(img[...,[2]],3))
+            pix[..., [0]] = np.add(np.bitwise_and(img[..., [0]], 0xF8), np.right_shift(img[..., [1]], 5))
+            pix[..., [1]] = np.add(np.bitwise_and(np.left_shift(img[..., [1]], 3), 0xE0), np.right_shift(img[..., [2]], 3))
             pix = pix.flatten().tolist()
 
             self.command(0x36)
             self.data(0x00)
             self.SetWindows(0, 0, self.width, self.height)
-            self.digital_write(self.DC_PIN,True)
+            self.digital_write(self.DC_PIN, True)
         for i in range(0, len(pix), 4096):
-            self.spi_writebyte(pix[i: i+4096])
+            self.spi_writebyte(pix[i:i+4096])
 
     def clear(self):
         """Clear contents of image buffer"""
-        _buffer = [0xff] * (self.width*self.height*2)
+        _buffer = [0xff] * (self.width * self.height * 2)
         self.SetWindows(0, 0, self.width, self.height)
-        self.digital_write(self.DC_PIN,True)
+        self.digital_write(self.DC_PIN, True)
         for i in range(0, len(_buffer), 4096):
-            self.spi_writebyte(_buffer[i: i+4096])
+            self.spi_writebyte(_buffer[i:i+4096])

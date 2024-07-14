@@ -81,8 +81,8 @@ try:
     time.sleep(2)
 
     logging.info("show image")
-    ImagePath = ["../pic/LCD_1inch9_1.jpg", "../pic/LCD_1inch9_2.jpg", "../pic/LCD_1inch9_3.jpg", "../pic/veno_mood_1.jpg"]
-    for i in range(0, 4):
+    ImagePath = ["../pic/veno_mood_1.jpg", "../pic/veno_mood_1.jpg"]
+    for i in range(0,1):
         image = Image.open(ImagePath[i])
         # image = image.rotate(0)
         disp.ShowImage(image)
