@@ -8,6 +8,7 @@ import socket
 from datetime import datetime
 import spidev as SPI
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+import psutil
 
 sys.path.append("..")
 from lcdlib import LCD_1inch9
@@ -47,6 +48,9 @@ def get_cpu_temp():
         temp = f.read()
     return float(temp) / 1000
 
+def get_cpu_usage():
+    return psutil.cpu_percent()
+
 def draw_rotated_text(image, text, position, font, fill, angle):
     # Create a new image with transparent background to draw the text
     text_image = Image.new('RGBA', (image.width, image.height), (255, 255, 255, 0))
@@ -61,23 +65,25 @@ def draw_rotated_text(image, text, position, font, fill, angle):
     image.paste(rotated_text, (x, y), rotated_text)
     return image
 
+
 while True:
     for i in range(1, 6):
         # Open image
         image = Image.open(f'../pic/veno_mood_{i}.jpg').convert('RGBA')
         image.rotate(180)
         # Get current time, IP address, and CPU temperature
-        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        current_time = datetime.now().strftime('%Y-%m-%d   %H:%M')
         ip_address = get_ip_address()
         cpu_temp = get_cpu_temp()
+        cpu_usage = get_cpu_usage()
 
         # Load font
-        font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 120)
+        font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 100)
 
         # Draw rotated text on the image
-        image = draw_rotated_text(image, f'Time: {current_time}', (10, 10), font, (255, 0, 0), 90)
-        image = draw_rotated_text(image, f'IP: {ip_address}', (10, 100), font, (255, 0, 0), 90)
-        image = draw_rotated_text(image, f'Temp: {cpu_temp:.1f} C', (10, 190), font, (255, 0, 0), 90)
+        image = draw_rotated_text(image, f'{current_time}', (10, 920), font, (255, 255, 255), 90)
+        image = draw_rotated_text(image, f'{ip_address}', (200, -150), font, (255, 255, 255), 90)
+        image = draw_rotated_text(image, f'CPU: {cpu_temp:.1f} C     {cpu_usage:.1f}%', (350, -150), font, (255, 255, 255), 90)
 
         # Display image
         disp.ShowImage(image)
