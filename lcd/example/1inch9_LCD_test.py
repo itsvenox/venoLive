@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-#import chardet
+
 import os
-import sys 
+import sys
 import time
 import logging
 import spidev as SPI
@@ -14,86 +14,128 @@ from PIL import Image, ImageDraw, ImageFont
 RST = 27
 DC = 25
 BL = 18
-bus = 0 
-device = 0 
-logging.basicConfig(level = logging.DEBUG)
+bus = 0
+device = 0
 
-try:
-    # display with hardware SPI:
-    ''' Warning!!!Don't  creation of multiple displayer objects!!! '''
-    #disp = LCD_1inch9.LCD_1inch9(spi=SPI.SpiDev(bus, device),spi_freq=10000000,rst=RST,dc=DC,bl=BL)
-    disp = LCD_1inch9.LCD_1inch9()
-    # Initialize library.
-    disp.Init()
-    # Clear display.
-    disp.clear()
-    #Set the backlight to 100
-    disp.bl_DutyCycle(50)
+logging.basicConfig(level=logging.DEBUG)
 
-    Font1 = ImageFont.truetype("../Font/Font01.ttf", 25)
-    Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
-    Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
+# Initialize the display with hardware SPI:
+disp = LCD_1inch9.LCD_1inch9(spi=SPI.SpiDev(bus, device), spi_freq=10000000, rst=RST, dc=DC, bl=BL)
 
-    # Create blank image for drawing.
-    image1 = Image.new("RGB", (disp.width,disp.height ), "WHITE")
-    draw = ImageDraw.Draw(image1)
+# Initialize library.
+disp.Init()
+# Clear display.
+disp.clear()
+# Set the backlight to 50% duty cycle
+disp.bl_DutyCycle(50)
 
-    logging.info("draw point")
-    draw.rectangle((5, 10, 6, 11), fill = "BLACK")
-    draw.rectangle((5, 25, 7, 27), fill = "BLACK")
-    draw.rectangle((5, 40, 8, 43), fill = "BLACK")
-    draw.rectangle((5, 55, 9, 59), fill = "BLACK")
+# Load fonts
+Font1 = ImageFont.truetype("../Font/Font00.ttf", 20)
+Font2 = ImageFont.truetype("../Font/Font01.ttf", 35)
+Font3 = ImageFont.truetype("../Font/Font02.ttf", 32)
 
-    logging.info("draw rectangle")
-    draw.rectangle([(20, 10), (70, 60)], fill = "WHITE", outline="BLUE")
-    draw.rectangle([(85, 10), (130, 60)], fill = "BLUE")
+time.sleep(2)
 
-    logging.info("draw line")
-    draw.line([(20, 10), (70, 60)], fill = "RED", width = 1)
-    draw.line([(70, 10), (20, 60)], fill = "RED", width = 1)
-    draw.line([(110, 65), (110, 115)], fill = "RED", width = 1)
-    draw.line([(85, 90), (135, 90)], fill = "RED", width = 1)
+logging.info("Showing image")
 
-    logging.info("draw circle")
-    draw.arc((85, 65, 135, 115), 0, 360, fill =(0, 255, 0))
-    draw.ellipse((20, 65, 70, 115), fill = (0, 255, 0))
+# Load the image
+image1 = Image.open('../pic/veno_mood_1.jpg')
+width, height = image1.size
 
-    logging.info("draw text")
-    draw.rectangle([(0, 120), (140, 153)], fill = "BLUE")
-    draw.text((5, 120), 'Hello world', fill = "RED", font=Font1)
-    draw.rectangle([(0,155), (172, 195)], fill = "RED")
-    draw.text((1, 155), 'WaveShare', fill = "WHITE", font=Font2)
-    draw.text((5, 190), '1234567890', fill = "GREEN", font=Font3)
-    text= u"微雪电子"
-    draw.text((5, 230),text, fill = "BLUE", font=Font3)
-    image1=image1.rotate(0)
-    disp.ShowImage(image1)
-    time.sleep(2)
-    
-    image2 = Image.new("RGB", (disp.height,disp.width ), "WHITE")
-    draw = ImageDraw.Draw(image2)
-    draw.text((70, 2), u"西风吹老洞庭波，", fill = "BLUE", font=Font3)
-    draw.text((70, 42), u"一夜湘君白发多。", fill = "RED", font=Font3)
-    draw.text((70, 82), u"醉后不知天在水，", fill = "GREEN", font=Font3)
-    draw.text((70, 122), u"满船清梦压星河。", fill = "BLACK", font=Font3)
-    image2=image2.rotate(0)
-    disp.ShowImage(image2)
-    time.sleep(2)
+# Create a new image with transparent background
+image2 = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+draw2 = ImageDraw.Draw(image2)
 
-    logging.info("show image")
-    ImagePath = ["../pic/veno_mood_1.jpg", "../pic/veno_mood_1.jpg"]
-    for i in range(0,1):
-        image = Image.open(ImagePath[i])
-        # image = image.rotate(0)
-        disp.ShowImage(image)
-        time.sleep(2)
-    disp.module_exit()
-    logging.info("quit:")
+# Define text and its properties
+text = 'Hello world'
+text_position = (5, 200)
+text_color = (0, 255, 0, 255)  # GREEN color with full opacity in RGBA
+draw2.text(text_position, text, fill=text_color, font=Font1)
 
-except IOError as e:
-    logging.info(e)
+# Rotate the new image
+image2 = image2.rotate(-90, expand=True)
 
-except KeyboardInterrupt:
-    disp.module_exit()
-    logging.info("quit:")
-    exit()
+# Convert image2 to RGB mode
+image2 = image2.convert('RGB')
+
+# Define the position for pasting
+px, py = 10, 10
+
+# Paste the text image onto the original image
+image1.paste(im=image2, box=(px, py), mask=image2.convert('L'))  # Use the alpha channel from image2 as mask
+
+# Show the image on the display
+disp.ShowImage(image1)
+
+time.sleep(2)
+
+
+
+
+
+
+
+
+
+
+
+
+import os
+import sys
+import time
+import logging
+import spidev as SPI
+sys.path.append("..")
+from lcdlib import LCD_1inch9
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+
+# Raspberry Pi pin configuration:
+RST = 27
+DC = 25
+BL = 18
+bus = 0
+device = 0
+
+logging.basicConfig(level=logging.DEBUG)
+
+# Initialize the display with hardware SPI:
+disp = LCD_1inch9.LCD_1inch9(spi=SPI.SpiDev(bus, device), spi_freq=10000000, rst=RST, dc=DC, bl=BL)
+
+disp.Init()
+disp.clear()
+disp.bl_DutyCycle(50)
+
+
+
+def draw_rotated_text(image, font, text, angle, x, y):
+    txt = Image.new(image.mode, font)
+    d = ImageDraw.Draw(txt)
+    d.text((0, 0), text, font=font, fill=(255, 0, 0))
+    txt = txt.rotate(angle, expand=1)
+    image.paste(txt, (int(x - txt.width/2), int(y - txt.height/2)), txt)
+
+
+# img = Image.open('../pic/veno_mood_1.jpg')
+# width, height = img.size
+
+# # #draw = ImageDraw.Draw(img)
+
+# font = ImageFont.truetype('Pillow/Tests/fonts/FreeSansBold.ttf', 30)
+# text_layer = Image.new('L', (width, height))
+# draw = ImageDraw.Draw(text_layer)
+# draw.text( (30, 0), "Text rotated",  font=font, fill=255)
+
+# rotated_text_layer = text_layer.rotate(10.0, expand=1)
+# img.paste( ImageOps.colorize(rotated_text_layer, (0,0,0), (10, 10,10)), (42,60),  rotated_text_layer)
+
+images = ['../pic/veno_mood_1.jpg', '../pic/veno_mood_2.jpg', '../pic/veno_mood_3.jpg', '../pic/veno_mood_4.jpg', '../pic/veno_mood_5.jpg']
+while True:
+    for i in images :
+        img = Image.open(i)
+        width, height = img.size
+        font = ImageFont.truetype('Pillow/Tests/fonts/FreeSansBold.ttf', 30)
+        disp.ShowImage(images[i])
+        i = i+1
+        time.sleep(3)
+
+# draw_rotated_text(image, font, "zero", 0, image.width/2, image.height/2)
