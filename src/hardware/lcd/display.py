@@ -65,7 +65,7 @@ class DisplayManager:
         return image
 
     def display_startup_image(self):
-        image = Image.open('../lcd/pic/veno_mood_1.jpg').convert('RGBA')
+        image = Image.open('../hardware/pic/veno_mood_1.jpg').convert('RGBA')
         self.disp.ShowImage(image)
         time.sleep(5)
 
@@ -78,7 +78,7 @@ class DisplayManager:
         tel_bot_status = 'OFF'
         
         if cpu_temp > 50:
-            image = Image.open('../lcd/pic/veno_mood_1.jpg').convert('RGBA')
+            image = Image.open('../hardware/pic/veno_mood_1.jpg').convert('RGBA')
             # image = image.rotate(180)
             
             image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
@@ -90,7 +90,7 @@ class DisplayManager:
             self.disp.ShowImage(image)
         else:
             for i in range(2, 3):
-                image = Image.open(f'../lcd/pic/veno_mood_{i}.jpg').convert('RGBA')
+                image = Image.open(f'../hardware/pic/veno_mood_{i}.jpg').convert('RGBA')
                 # image = image.rotate(180)
                 
                 image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
