@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 import psutil
 
 sys.path.append("..")
-from lcdlib import LCD_1inch9
+from lcd.lcdlib import LCD_1inch9
 
 # Raspberry Pi pin configuration:
 RST = 27
@@ -58,13 +58,14 @@ class DisplayManager:
     def get_cpu_usage(self):
         return psutil.cpu_percent()
 
-    def is_discord_bot_running(self, is_running:bool = False):
+    def discord_bot_running(self, is_running=False):
         # Placeholder for the actual check, replace with the correct command or logic
         # Example: check if a process named 'discordbot' is running
         # for proc in psutil.process_iter(['name']):
         #     if 'discordbot' in proc.info['name']:
         #         return True
-        return is_running
+        self.update_display()
+        return 'ON' if is_running else 'OFF'
 
     def draw_rotated_text(self, image, text, position, font, fill, angle):
         text_image = Image.new('RGBA', (image.width, image.height), (255, 255, 255, 0))
@@ -76,7 +77,7 @@ class DisplayManager:
         return image
 
     def display_startup_image(self):
-        image = Image.open('../pic/veno_mood_1.jpg').convert('RGBA')
+        image = Image.open('../lcd/pic/veno_mood_1.jpg').convert('RGBA')
         self.disp.ShowImage(image)
         time.sleep(5)
 
@@ -85,34 +86,32 @@ class DisplayManager:
         ip_address = self.get_ip_address()
         cpu_temp = self.get_cpu_temp()
         cpu_usage = self.get_cpu_usage()
-        bot_status = 'ON' if self.is_discord_bot_running() else 'OFF'
+        dis_bot_status = self.discord_bot_running()
         
         if cpu_temp > 50:
-            image = Image.open('../pic/veno_mood_1.jpg').convert('RGBA')
+            image = Image.open('../lcd/pic/veno_mood_1.jpg').convert('RGBA')
             # image = image.rotate(180)
             
             image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{ip_address}', (200, -150), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{cpu_temp:.1f} C       {cpu_usage:.1f}%', (960, -130), self.font, (255, 255, 255), 90)
-            image = self.draw_rotated_text(image, f'{bot_status}', (820, -220), self.font1, (0, 255, 0) if bot_status == 'ON' else (255, 0, 0), 90)
+            image = self.draw_rotated_text(image, f'{dis_bot_status}', (820, -220), self.font1, (0, 255, 0) if dis_bot_status == 'ON' else (255, 0, 0), 90)
             
             self.disp.ShowImage(image)
-            time.sleep(1)
         else:
             for i in range(2, 3):
-                image = Image.open(f'../pic/veno_mood_{i}.jpg').convert('RGBA')
+                image = Image.open(f'../lcd/pic/veno_mood_{i}.jpg').convert('RGBA')
                 # image = image.rotate(180)
                 
                 image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
                 image = self.draw_rotated_text(image, f'{ip_address}', (200, -150), self.font, (255, 255, 255), 90)
                 image = self.draw_rotated_text(image, f'{cpu_temp:.1f} C       {cpu_usage:.1f}%', (960, -130), self.font, (255, 255, 255), 90)
-                image = self.draw_rotated_text(image, f'{bot_status}', (820, -220), self.font1, (0, 255, 0) if bot_status == 'ON' else (255, 0, 0), 90)
+                image = self.draw_rotated_text(image, f'{dis_bot_status}', (820, -220), self.font1, (0, 255, 0) if dis_bot_status == 'ON' else (255, 0, 0), 90)
                 
                 self.disp.ShowImage(image)
-                time.sleep(1)
 
-if __name__ == "__main__":
-    display_manager = DisplayManager()
-    display_manager.display_startup_image()
-    while True:
-        display_manager.update_display()
+# if __name__ == "__main__":
+#     display_manager = DisplayManager()
+#     display_manager.display_startup_image()
+#     while True:
+#         display_manager.update_display()
