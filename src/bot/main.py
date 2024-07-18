@@ -8,15 +8,19 @@ import datetime
 import sys
 import os
 
+
+
 # Add the parent directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from lcd.example.display import DisplayManager
 
-from ui.screen import Screen
+display_manager = DisplayManager()
+display_manager.display_startup_image()
 
 
 
 intents = discord.Intents.all()
-screen = Screen()
+
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
@@ -24,7 +28,8 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-    screen.setup_screen()
+    display_manager.is_discord_bot_running(True)
+
 
 @bot.command(name='WEE')
 async def wee(ctx):
@@ -68,5 +73,8 @@ async def get_status(ctx):
 @bot.command(name='delete')
 async def delete_memory(ctx):
     pass
+
+while True:
+    display_manager.update_display()
 
 bot.run(DISCORD_BOT_TOKEN)

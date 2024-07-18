@@ -52,39 +52,36 @@ def get_cpu_usage():
     return psutil.cpu_percent()
 
 def draw_rotated_text(image, text, position, font, fill, angle):
-    # Create a new image with transparent background to draw the text
+
     text_image = Image.new('RGBA', (image.width, image.height), (255, 255, 255, 0))
     draw = ImageDraw.Draw(text_image)
     draw.text((0, 0), text, font=font, fill=fill)
-
-    # Rotate the text image
     rotated_text = text_image.rotate(angle, expand=1)
-
-    # Calculate position to paste the rotated text
     x, y = position
     image.paste(rotated_text, (x, y), rotated_text)
     return image
 
 
 while True:
+    current_time = datetime.now().strftime('%Y-%m-%d   %H:%M')
+    ip_address = get_ip_address()
+    cpu_temp = get_cpu_temp()
+    cpu_usage = get_cpu_usage()
     for i in range(1, 6):
         # Open image
         image = Image.open(f'../pic/veno_mood_{i}.jpg').convert('RGBA')
         image.rotate(180)
         # Get current time, IP address, and CPU temperature
-        current_time = datetime.now().strftime('%Y-%m-%d   %H:%M')
-        ip_address = get_ip_address()
-        cpu_temp = get_cpu_temp()
-        cpu_usage = get_cpu_usage()
+        
 
         # Load font
         font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 100)
-
+        font1 = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 80)
         # Draw rotated text on the image
         image = draw_rotated_text(image, f'{current_time}', (10, 920), font, (255, 255, 255), 90)
         image = draw_rotated_text(image, f'{ip_address}', (200, -150), font, (255, 255, 255), 90)
-        image = draw_rotated_text(image, f'CPU: {cpu_temp:.1f} C     {cpu_usage:.1f}%', (350, -150), font, (255, 255, 255), 90)
-
+        image = draw_rotated_text(image, f'{cpu_temp:.1f} C       {cpu_usage:.1f}%', (960, -130), font, (255, 255, 255), 90)
+        image = draw_rotated_text(image, f'ON', (820, -220), font1, (0, 255, 0), 90)
         # Display image
         disp.ShowImage(image)
 
