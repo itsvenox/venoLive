@@ -12,7 +12,7 @@ import os
 
 # Add the parent directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lcd.example.display import DisplayManager
+from hardware.lcd.display import DisplayManager
 
 display_manager = DisplayManager()
 display_manager.display_startup_image()
