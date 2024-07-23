@@ -12,6 +12,7 @@ import requests
 import spidev as SPI
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import psutil
+import RPi.GPIO as GPIO
 
 sys.path.append("..")
 from hardware.lcdlib import LCD_1inch9
@@ -25,6 +26,7 @@ class DisplayManager:
         self.bl = 18
         self.bus = 0
         self.device = 0
+        self.fan = 37
         self.spi_freq = spi_freq
 
         self.disp = LCD_1inch9.LCD_1inch9(spi=SPI.SpiDev(self.bus, self.device), spi_freq=spi_freq, rst=self.rst, dc=self.dc, bl=self.bl)
@@ -77,14 +79,26 @@ class DisplayManager:
         self.disp.ShowImage(image)
         time.sleep(5)
 
+    def turn_on_fan(self):
+        cpu_temp = self.get_cpu_temp()
+        if cpu_temp > 45:
+            # Turn on the fan (assuming GPIO 37 is connected to the fan)
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.fan, GPIO.OUT)
+            GPIO.output(self.fan, GPIO.HIGH)
+            logging.info("Fan turned on due to high CPU temperature")
+        else:
+            logging.info("CPU temperature is within safe range, fan is off")
+
     def update_display(self, is_running):
         current_time = datetime.now().strftime('%Y-%m-%d   %H:%M')
         ip_address = self.get_ip_address()
         cpu_temp = self.get_cpu_temp()
         cpu_usage = self.get_cpu_usage()
+        
         dis_bot_status = 'ON' if is_running else 'OFF'
         tel_bot_status = 'OFF'
-        
+        self.turn_on_fan()
         if cpu_temp > 50:
             image = Image.open(BytesIO(self.img1.content)).convert('RGBA')
             # image = image.rotate(180)
