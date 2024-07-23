@@ -87,7 +87,7 @@ class DisplayManager:
             GPIO.setup(self.fan, GPIO.OUT)
             GPIO.output(self.fan, GPIO.HIGH)
             logging.info("Fan turned on due to high CPU temperature")
-            time.sleep(30)
+            # time.sleep(30)
         else:
             logging.info("CPU temperature is within safe range, fan is off")
 
