@@ -25,6 +25,7 @@ DISCORD_BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 async def on_ready():
     print(f'We have logged in as {bot.user}')
     discord_bot_running.start()
+    ckeck_fan.start()
     # update_display.start()  # Start the update_display task
 
 @bot.command(name='WEE')
@@ -82,8 +83,13 @@ async def delete_memory(ctx):
     # Implement memory delete functionality here
     pass
 
-@tasks.loop(seconds=1)  # Update display every 1 seconds
+@tasks.loop(seconds=3)  # Update display every 1 seconds
 async def discord_bot_running():
     display_manager.discord_bot_running(True)
+
+
+@tasks.loop(seconds=30)  # Update display every 1 seconds
+async def ckeck_fan():
+    display_manager.turn_on_fan()
 
 bot.run(DISCORD_BOT_TOKEN)

@@ -87,6 +87,7 @@ class DisplayManager:
             GPIO.setup(self.fan, GPIO.OUT)
             GPIO.output(self.fan, GPIO.HIGH)
             logging.info("Fan turned on due to high CPU temperature")
+            time.sleep(30)
         else:
             logging.info("CPU temperature is within safe range, fan is off")
 
@@ -98,7 +99,7 @@ class DisplayManager:
         
         dis_bot_status = 'ON' if is_running else 'OFF'
         tel_bot_status = 'OFF'
-        self.turn_on_fan()
+        
         if cpu_temp > 50:
             image = Image.open(BytesIO(self.img1.content)).convert('RGBA')
             # image = image.rotate(180)
