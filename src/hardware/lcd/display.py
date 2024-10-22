@@ -60,9 +60,12 @@ class DisplayManager:
 
     def get_cpu_usage(self):
         return psutil.cpu_percent()
+    
+    def get_last_command(self, last_command=None):
+        return last_command
 
-    def discord_bot_running(self, is_running=False):
-        self.update_display(is_running)
+    def discord_bot_running(self, is_running=False, last_command=None):
+        self.update_display(is_running, last_command)
         return is_running
 
     def draw_rotated_text(self, image, text, position, font, fill, angle):
@@ -91,11 +94,12 @@ class DisplayManager:
         else:
             logging.info("CPU temperature is within safe range, fan is off")
 
-    def update_display(self, is_running):
+    def update_display(self, is_running, last_command):
         current_time = datetime.now().strftime('%Y-%m-%d   %H:%M')
         ip_address = self.get_ip_address()
         cpu_temp = self.get_cpu_temp()
         cpu_usage = self.get_cpu_usage()
+        
         
         dis_bot_status = 'ON' if is_running else 'OFF'
         tel_bot_status = 'OFF'
@@ -106,6 +110,7 @@ class DisplayManager:
             
             image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{ip_address}', (200, -150), self.font, (255, 255, 255), 90)
+            image = self.draw_rotated_text(image, f'{last_command}', (200, -170), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{cpu_temp:.1f} C       {cpu_usage:.1f}%', (960, -130), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{dis_bot_status}', (820, -220), self.font1, (0, 255, 0) if dis_bot_status == 'ON' else (255, 0, 0), 90)
             image = self.draw_rotated_text(image, f'{tel_bot_status}', (820, -600), self.font1, (0, 255, 0) if tel_bot_status == 'ON' else (255, 0, 0), 90)
@@ -117,6 +122,7 @@ class DisplayManager:
             
             image = self.draw_rotated_text(image, f'{current_time}', (10, 920), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{ip_address}', (200, -150), self.font, (255, 255, 255), 90)
+            image = self.draw_rotated_text(image, f'{last_command}', (200, -170), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{cpu_temp:.1f} C       {cpu_usage:.1f}%', (960, -130), self.font, (255, 255, 255), 90)
             image = self.draw_rotated_text(image, f'{dis_bot_status}', (820, -220), self.font1, (0, 255, 0) if dis_bot_status == 'ON' else (255, 0, 0), 90)
             image = self.draw_rotated_text(image, f'{tel_bot_status}', (820, -600), self.font1, (0, 255, 0) if tel_bot_status == 'ON' else (255, 0, 0), 90)
