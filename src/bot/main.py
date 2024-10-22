@@ -78,10 +78,6 @@ async def get_status(ctx):
     except Exception as e:
         await ctx.reply(f'Error retrieving status: {e}')
 
-@bot.command(name='delete')
-async def delete_memory(ctx):
-    # Implement memory delete functionality here
-    pass
 
 @tasks.loop(seconds=3)  # Update display every 1 seconds
 async def discord_bot_running():
